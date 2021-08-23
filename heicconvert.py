@@ -48,6 +48,8 @@ if __name__ == "__main__":
     for x in os.listdir(HeicDirectory):
         if "heic" in x:
             HeicList.append(os.path.join(HeicDirectory,x))
+        if "HEIC" in x:
+            HeicList.append(os.path.join(HeicDirectory,x))
         else:
             pass
 
