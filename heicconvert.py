@@ -54,16 +54,21 @@ if __name__ == "__main__":
             pass
 
     NumberOfFiles = len(HeicList)
-    BatchConvert(HeicList)
-
-    end = time.time()
 
     if NumberOfFiles == 0:
         print("No HEIC files found in directory")
     else:
         print(f"""
-            Done! Converted {NumberOfFiles} Image files in {round(end-start,2)} seconds.\n
-            Processed at a rate of {round(round(end-start, 2)/NumberOfFiles, 3)} seconds per Image.
+            Attempting to convert {NumberOfFiles} Image files\n
             """)
+
+    BatchConvert(HeicList)
+
+    end = time.time()
+
+    print(f"""
+        Done! Converted {NumberOfFiles} Image files in {round(end-start,2)} seconds.\n
+        Processed at a rate of {round(round(end-start, 2)/NumberOfFiles, 3)} seconds per Image.
+        """)
 
     time.sleep(2)
