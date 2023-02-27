@@ -1,2 +1,1 @@
 pillow_heif=0.10.0
-winshell=0.6

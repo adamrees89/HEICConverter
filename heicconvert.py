@@ -1,11 +1,12 @@
 import os
-import winshell
 from pathlib import Path
 import time
 import sys
 import concurrent.futures
 from PIL import Image
 from pillow_heif import register_heif_opener
+from tkinter import Tk
+from tkinter.filedialog import askdirectory
 
 def BatchConvert(fileList):
     register_heif_opener()
@@ -33,7 +34,9 @@ if __name__ == "__main__":
     HeicList = []
 
     if ClickedOnFolder == "":
-        HeicDirectory = r"C:\Users\adam.rees\Documents\Personal OneDrive\OneDrive\Python Resource\ConvertTest"
+        Tk().withdraw()
+        HeicDirectory = askdirectory()
+        print(HeicDirectory)
     else:
         HeicDirectory = ClickedOnFolder
 
