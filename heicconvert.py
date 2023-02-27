@@ -4,31 +4,23 @@ from pathlib import Path
 import time
 import sys
 import concurrent.futures
-
-def VipsSetup():
-    ParentDirectory = os.path.join(winshell.my_documents(),"HelperScripts")
-    os.makedirs(ParentDirectory, exist_ok=True)
-
-    LibDirectory = os.path.join(ParentDirectory,"lib","vips")
-    os.makedirs(ParentDirectory, exist_ok=True)
-
-    vipshome = os.path.join(LibDirectory,"bin")
-    os.environ['PATH'] = vipshome + ';' + os.environ['PATH']
-
-
-VipsSetup()
-import pyvips
-
+from PIL import Image
+from pillow_heif import register_heif_opener
 
 def BatchConvert(fileList):
+    register_heif_opener()
     with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.map(SingleConvertHeictoJpeg, fileList)
 
 
 def SingleConvertHeictoJpeg(Heicfile):
-    image = pyvips.Image.new_from_file(Heicfile)
-    out = Heicfile.replace("heic","jpg")
-    image.jpegsave(out)
+    #Open the image
+    image = Image.open(Heicfile)
+    #Change the extension from heic to jpg
+    outName = Heicfile.replace(".heic",".jpg")
+    #Save the new image as outName (New Extension)
+    image.save(outName)
+    #The below lines take the original photo filepath and modify it so the photos move into the converted subfolder
     FilePath = Path(Heicfile)
     ConvertedPath = os.path.join(FilePath.parent,"Converted",os.path.basename(FilePath))
     os.makedirs(Path(ConvertedPath).parent, exist_ok=True)
@@ -41,7 +33,7 @@ if __name__ == "__main__":
     HeicList = []
 
     if ClickedOnFolder == "":
-        HeicDirectory = r"C:\Users\adamr\OneDrive\Python Resource\ConvertTest"
+        HeicDirectory = r"C:\Users\adam.rees\Documents\Personal OneDrive\OneDrive\Python Resource\ConvertTest"
     else:
         HeicDirectory = ClickedOnFolder
 
