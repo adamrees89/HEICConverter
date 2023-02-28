@@ -7,13 +7,13 @@ from PIL import Image
 from pillow_heif import register_heif_opener
 from tkinter import Tk
 from tkinter.filedialog import askdirectory
-from progress.bar import Bar
+#from progress.bar import Bar
+from tqdm import tqdm
 
-def BatchConvert(fileList):
+def BatchConvert(fileList, NumberOfFiles):
     register_heif_opener()
-    with Bar('Converting...') as bar:
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(SingleConvertHeictoJpeg, fileList)
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        list(tqdm(executor.map(SingleConvertHeictoJpeg, fileList), total=NumberOfFiles))
 
 
 def SingleConvertHeictoJpeg(Heicfile):
@@ -58,14 +58,14 @@ if __name__ == "__main__":
         print(f"""
             Attempting to convert {NumberOfFiles} Image files\n
             """)
+        
+        BatchConvert(HeicList, NumberOfFiles)
 
-    BatchConvert(HeicList)
+        end = time.time()
 
-    end = time.time()
-
-    print(f"""
-        Done! Converted {NumberOfFiles} Image files in {round(end-start,2)} seconds.\n
-        Processed at a rate of {round(round(end-start, 2)/NumberOfFiles, 3)} seconds per Image.
-        """)
+        print(f"""
+            Done! Converted {NumberOfFiles} Image files in {round(end-start,2)} seconds.\n
+            Processed at a rate of {round(round(end-start, 2)/NumberOfFiles, 3)} seconds per Image.
+            """)
 
     time.sleep(2)
