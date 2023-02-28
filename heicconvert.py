@@ -7,11 +7,13 @@ from PIL import Image
 from pillow_heif import register_heif_opener
 from tkinter import Tk
 from tkinter.filedialog import askdirectory
+from progress.bar import Bar
 
 def BatchConvert(fileList):
     register_heif_opener()
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(SingleConvertHeictoJpeg, fileList)
+    with Bar('Converting...') as bar:
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            executor.map(SingleConvertHeictoJpeg, fileList)
 
 
 def SingleConvertHeictoJpeg(Heicfile):

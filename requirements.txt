@@ -1,1 +1,2 @@
 pillow_heif=0.10.0
+progress=1.6
