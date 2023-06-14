@@ -31,7 +31,6 @@ def SingleConvertHeictoJpeg(Heicfile):
 
 
 if __name__ == "__main__":
-    start = time.time()
     ClickedOnFolder = " ".join(sys.argv[1:])
     HeicList = []
 
@@ -41,6 +40,8 @@ if __name__ == "__main__":
         print(HeicDirectory)
     else:
         HeicDirectory = ClickedOnFolder
+    
+    start = time.time()
 
     for x in os.listdir(HeicDirectory):
         if "heic" in x:
