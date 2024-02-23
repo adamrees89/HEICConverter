@@ -13,7 +13,7 @@ from tqdm import tqdm
 def BatchConvert(fileList, NumberOfFiles):
     register_heif_opener()
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        list(tqdm(executor.map(SingleConvertHeictoJpeg, fileList), total=NumberOfFiles))
+        list(tqdm(executor.map(SingleConvertHeictoJpeg, fileList, chunksize=5), total=NumberOfFiles))
 
 
 def SingleConvertHeictoJpeg(Heicfile):
