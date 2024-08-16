@@ -59,9 +59,7 @@ if __name__ == "__main__":
         if 'Converted' in dirs:
             dirs.remove('Converted')
         for x in files:
-            if x.endswith('.heic'):
-                HeicList.append(os.path.join(root,x))
-            if x.endswith('.HEIC'):
+            if x.lower().endswith('.heic'):
                 HeicList.append(os.path.join(root,x))
 
     NumberOfFiles = len(HeicList)
