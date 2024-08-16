@@ -13,7 +13,7 @@ Project has been updated to utilise pillow_heif
 
 ## Speed
 
-Currently the script can process approximately XX photos per second, depending on available cores as it uses the [concurrent.futures module.](https://docs.python.org/3.3/library/concurrent.futures.html).  See the table below for the speed comparison before and after adding multithreading.
+Currently the script can process approximately 13.5 photos per second, depending on available cores as it uses the [concurrent.futures module.](https://docs.python.org/3.3/library/concurrent.futures.html).  See the table below for the speed comparison before and after adding multithreading.
 
 More information and quick tutorial on concurrent.futures:  https://gist.github.com/mangecoeur/9540178
 
@@ -30,3 +30,4 @@ Having changed computer since, I didn't want to rerun the above numbers to get f
 Pillow and Pillow_heif Multithreading with concurrent.futures | 120 | 26.9 seconds | 0.224 |
 Multithreading with chunksize = 10 | 120 | 20.1 seconds | 0.168 |
 Multithreading with chunksize = 5 | 120 | 19.32 seconds | 0.161 |
+Multithreading with chunksize = 3 & directory traversing improvement | 120 | 8.9 seconds | 0.074 |

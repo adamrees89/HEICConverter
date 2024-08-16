@@ -13,7 +13,7 @@ from tqdm import tqdm
 def BatchConvert(fileList, NumberOfFiles):
     register_heif_opener()
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        list(tqdm(executor.map(SingleConvertHeictoJpeg, fileList, chunksize=5), total=NumberOfFiles))
+        list(tqdm(executor.map(SingleConvertHeictoJpeg, fileList, chunksize=3), total=NumberOfFiles))
 
 
 def SingleConvertHeictoJpeg(Heicfile):
@@ -37,19 +37,32 @@ if __name__ == "__main__":
     if ClickedOnFolder == "":
         Tk().withdraw()
         HeicDirectory = askdirectory()
-        print(HeicDirectory)
     else:
         HeicDirectory = ClickedOnFolder
+
+    HeicDirectory = os.path.normpath(HeicDirectory)
     
     start = time.time()
 
-    for x in os.listdir(HeicDirectory):
-        if "heic" in x:
-            HeicList.append(os.path.join(HeicDirectory,x))
-        if "HEIC" in x:
-            HeicList.append(os.path.join(HeicDirectory,x))
-        else:
-            pass
+# Old Single Folder file finder:
+    # for x in os.listdir(HeicDirectory):
+    #     if "heic" in x:
+    #         HeicList.append(os.path.join(HeicDirectory,x))
+    #     if "HEIC" in x:
+    #         HeicList.append(os.path.join(HeicDirectory,x))
+    #     else:
+    #         pass
+
+# New sub-folder file finder:
+
+    for root, dirs, files in os.walk(HeicDirectory):
+        if 'Converted' in dirs:
+            dirs.remove('Converted')
+        for x in files:
+            if x.endswith('.heic'):
+                HeicList.append(os.path.join(root,x))
+            if x.endswith('.HEIC'):
+                HeicList.append(os.path.join(root,x))
 
     NumberOfFiles = len(HeicList)
 
@@ -59,14 +72,14 @@ if __name__ == "__main__":
         print(f"""
             Attempting to convert {NumberOfFiles} Image files\n
             """)
-        
+
         BatchConvert(HeicList, NumberOfFiles)
 
         end = time.time()
 
         print(f"""
             Done! Converted {NumberOfFiles} Image files in {round(end-start,2)} seconds.\n
-            Processed at a rate of {round(round(end-start, 2)/NumberOfFiles, 3)} seconds per Image.
+            Processed at a rate of {round(round(end-start, 2)/NumberOfFiles, 3)} seconds per image or {round(NumberOfFiles/round(end-start, 2), 3)} images per second
             """)
 
     time.sleep(2)
