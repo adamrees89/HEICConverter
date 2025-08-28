@@ -22,7 +22,7 @@ def SingleConvertHeictoJpeg(Heicfile):
     try:
         image = Image.open(Heicfile)
     except Exception as e:
-        print(f"Error opening {Heicfile}: {e}")
+        tqdm.write(f"Open/save failed for {Heicfile}: {e}")
         return
     #Change the extension from heic to jpg
     # outName = Heicfile.replace(".heic",".jpg")
