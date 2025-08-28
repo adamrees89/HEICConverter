@@ -3,6 +3,7 @@ from pathlib import Path
 import time
 import sys
 import concurrent.futures
+import re
 from PIL import Image
 from pillow_heif import register_heif_opener
 from tkinter import Tk
@@ -18,9 +19,14 @@ def BatchConvert(fileList, NumberOfFiles):
 
 def SingleConvertHeictoJpeg(Heicfile):
     #Open the image
-    image = Image.open(Heicfile)
+    try:
+        image = Image.open(Heicfile)
+    except Exception as e:
+        print(f"Error opening {Heicfile}: {e}")
+        return
     #Change the extension from heic to jpg
-    outName = Heicfile.replace(".heic",".jpg")
+    # outName = Heicfile.replace(".heic",".jpg")
+    outName = re.sub(".heic",".jpg",Heicfile,flags=re.IGNORECASE)
     #Save the new image as outName (New Extension)
     image.save(outName)
     #The below lines take the original photo filepath and modify it so the photos move into the converted subfolder
