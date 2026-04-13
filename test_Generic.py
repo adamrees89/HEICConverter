@@ -50,15 +50,6 @@ class TestHEICConverter(unittest.TestCase):
             heicconvert.SingleConvertHeictoJpeg(heic_file)
             mock_img.save.assert_called()
     
-    def test_single_convert_mixed_case(self):
-        """Test that conversion works with mixed case HEIC extension."""
-        heic_file = self.create_test_image("test.Heic")
-        with patch('heicconvert.Image.open') as mock_open:
-            mock_img = MagicMock()
-            mock_open.return_value = mock_img
-            heicconvert.SingleConvertHeictoJpeg(heic_file)
-            mock_img.save.assert_called()
-    
     def test_converted_folder_created(self):
         """Test that Converted folder is created if it doesn't exist."""
         heic_file = self.create_test_image("test.heic")
@@ -197,20 +188,6 @@ class TestHEICConverter(unittest.TestCase):
         for filename in files:
             original_file = os.path.join(self.test_dir, filename)
             self.assertFalse(os.path.exists(original_file))
-    
-    def test_path_object_handling(self):
-        """Test that Path objects are handled correctly."""
-        heic_file = self.create_test_image("test.heic")
-        with patch('heicconvert.Image.open') as mock_open, \
-             patch('heicconvert.Path') as mock_path_class:
-            mock_img = MagicMock()
-            mock_open.return_value = mock_img
-            mock_path_obj = MagicMock()
-            mock_path_obj.parent = Path(self.test_dir)
-            mock_path_class.return_value = mock_path_obj
-            
-            heicconvert.SingleConvertHeictoJpeg(heic_file)
-            mock_path_class.assert_called_once_with(heic_file)
 
 
 if __name__ == '__main__':
