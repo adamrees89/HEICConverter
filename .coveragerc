@@ -2,5 +2,6 @@
 omit = 
   test_*
   */python?.?/*
+  .github/*
 
 relative_files = True
