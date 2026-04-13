@@ -23,7 +23,7 @@ jobs:
 
       - name: Test with unittest
         run: |
-          coverage run -m unittest discover
+          coverage run -m unittest discover -s . -p "test_*.py" -t .
           coveralls --service=github
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
