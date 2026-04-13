@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock, Mock
 from PIL import Image
 import sys
 import re
-from heicconvert import SingleConvertHeictoJpeg, BatchConvert
+import heicconvert
 
 class TestHEICConverter(unittest.TestCase):
     
@@ -38,7 +38,7 @@ class TestHEICConverter(unittest.TestCase):
              patch('heicconvert.Image.new') as mock_new:
             mock_img = MagicMock()
             mock_open.return_value = mock_img
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
             mock_img.save.assert_called()
     
     def test_single_convert_case_insensitive(self):
@@ -47,7 +47,7 @@ class TestHEICConverter(unittest.TestCase):
         with patch('heicconvert.Image.open') as mock_open:
             mock_img = MagicMock()
             mock_open.return_value = mock_img
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
             mock_img.save.assert_called()
     
     def test_single_convert_mixed_case(self):
@@ -56,7 +56,7 @@ class TestHEICConverter(unittest.TestCase):
         with patch('heicconvert.Image.open') as mock_open:
             mock_img = MagicMock()
             mock_open.return_value = mock_img
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
             mock_img.save.assert_called()
     
     def test_converted_folder_created(self):
@@ -65,14 +65,14 @@ class TestHEICConverter(unittest.TestCase):
         with patch('heicconvert.Image.open') as mock_open:
             mock_img = MagicMock()
             mock_open.return_value = mock_img
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
         self.assertTrue(os.path.exists(self.converted_dir))
     
     def test_invalid_file_handling(self):
         """Test handling of non-existent files."""
         invalid_file = os.path.join(self.test_dir, "nonexistent.heic")
         with patch('heicconvert.tqdm.write'):
-            result = SingleConvertHeictoJpeg(invalid_file)
+            result = heicconvert.SingleConvertHeictoJpeg(invalid_file)
         self.assertIsNone(result)
     
     def test_heic_moved_to_converted(self):
@@ -81,7 +81,7 @@ class TestHEICConverter(unittest.TestCase):
         with patch('heicconvert.Image.open') as mock_open:
             mock_img = MagicMock()
             mock_open.return_value = mock_img
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
         # After conversion, original HEIC should be moved to Converted folder
         self.assertFalse(os.path.exists(heic_file))
         converted_heic = os.path.join(self.converted_dir, "test.heic")
@@ -93,7 +93,7 @@ class TestHEICConverter(unittest.TestCase):
         with patch('heicconvert.Image.open') as mock_open:
             mock_img = MagicMock()
             mock_open.return_value = mock_img
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
             # Verify save was called with jpg path in source directory
             saved_path = mock_img.save.call_args[0][0]
             self.assertTrue(saved_path.endswith('.jpg'))
@@ -106,7 +106,7 @@ class TestHEICConverter(unittest.TestCase):
         with patch('heicconvert.Image.open') as mock_open:
             mock_img = MagicMock()
             mock_open.return_value = mock_img
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
             # Verify the path passed to save has .jpg extension
             saved_path = mock_img.save.call_args[0][0]
             self.assertTrue(saved_path.endswith('.jpg'))
@@ -121,7 +121,7 @@ class TestHEICConverter(unittest.TestCase):
         mock_executor.map.return_value = []
         mock_tqdm.return_value = []
         
-        BatchConvert([], 0)
+        heicconvert.BatchConvert([], 0)
         mock_register.assert_called_once()
     
     @patch('heicconvert.register_heif_opener')
@@ -135,7 +135,7 @@ class TestHEICConverter(unittest.TestCase):
         mock_tqdm.return_value = []
         
         files = ["file1.heic", "file2.heic"]
-        BatchConvert(files, len(files))
+        heicconvert.BatchConvert(files, len(files))
         
         mock_executor.map.assert_called_once()
     
@@ -150,7 +150,7 @@ class TestHEICConverter(unittest.TestCase):
         mock_tqdm.return_value = []
         
         files = ["file1.heic", "file2.heic"]
-        BatchConvert(files, 2)
+        heicconvert.BatchConvert(files, 2)
         
         # Verify map was called with correct chunksize
         call_kwargs = mock_executor.map.call_args[1]
@@ -160,7 +160,7 @@ class TestHEICConverter(unittest.TestCase):
         """Test that exception messages are formatted correctly."""
         invalid_file = os.path.join(self.test_dir, "nonexistent.heic")
         with patch('heicconvert.tqdm.write') as mock_write:
-            SingleConvertHeictoJpeg(invalid_file)
+            heicconvert.SingleConvertHeictoJpeg(invalid_file)
             mock_write.assert_called_once()
             message = mock_write.call_args[0][0]
             self.assertIn("Open/save failed", message)
@@ -178,7 +178,7 @@ class TestHEICConverter(unittest.TestCase):
         with patch('heicconvert.Image.open') as mock_open:
             mock_img = MagicMock()
             mock_open.return_value = mock_img
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
         
         converted_heic = os.path.join(nested_dir, "Converted", "test.heic")
         self.assertTrue(os.path.exists(converted_heic))
@@ -191,7 +191,7 @@ class TestHEICConverter(unittest.TestCase):
             with patch('heicconvert.Image.open') as mock_open:
                 mock_img = MagicMock()
                 mock_open.return_value = mock_img
-                SingleConvertHeictoJpeg(heic_file)
+                heicconvert.SingleConvertHeictoJpeg(heic_file)
         
         # Verify all original files were moved
         for filename in files:
@@ -209,7 +209,7 @@ class TestHEICConverter(unittest.TestCase):
             mock_path_obj.parent = Path(self.test_dir)
             mock_path_class.return_value = mock_path_obj
             
-            SingleConvertHeictoJpeg(heic_file)
+            heicconvert.SingleConvertHeictoJpeg(heic_file)
             mock_path_class.assert_called_once_with(heic_file)
 
 
