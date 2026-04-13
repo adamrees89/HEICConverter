@@ -1,3 +1,2 @@
-pillow_heif==0.10.0
-tqdm==4.66.5
-pillow>=10.2.0 # not directly required, pinned by Snyk to avoid a vulnerability
+pillow_heif==1.3.0
+tqdm==4.67.3
