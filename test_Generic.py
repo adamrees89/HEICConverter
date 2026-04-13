@@ -98,9 +98,8 @@ class TestHEICConverter(unittest.TestCase):
             mock_img = MagicMock()
             mock_open.return_value = mock_img
             heicconvert.SingleConvertHeictoJpeg(heic_file)
-            # Verify the path passed to save has .jpg extension
             saved_path = mock_img.save.call_args[0][0]
-            self.assertTrue(saved_path.endswith('.jpg'))
+            self.assertEqual(saved_path, expected_jpg)
     
     @patch('heicconvert.register_heif_opener')
     @patch('heicconvert.tqdm')
