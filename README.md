@@ -2,7 +2,7 @@
 ![GitHub](https://img.shields.io/github/license/adamrees89/HEICConverter.svg)
 ![GitHub repo size in bytes](https://img.shields.io/github/repo-size/adamrees89/HEICConverter.svg)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/adamrees89/HEICConverter.svg)
-[![Coverage Status](https://coveralls.io/repos/github/adamrees89/HEICConverter/badge.svg?branch=adamrees89-patch-1)](https://coveralls.io/github/adamrees89/HEICConverter?branch=adamrees89-patch-1)
+[![Coverage Status](https://coveralls.io/repos/github/adamrees89/HEICConverter/badge.svg)](https://coveralls.io/github/adamrees89/HEICConverter)
 
 ![GitHub issues](https://img.shields.io/github/issues/adamrees89/HEICConverter.svg)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/adamrees89/HEICConverter.svg)
