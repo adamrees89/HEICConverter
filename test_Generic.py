@@ -70,6 +70,70 @@ class TestHEICConverter(unittest.TestCase):
         self.assertTrue(os.path.exists(os.path.join(self.test_dir, "test1.jpg")))
         self.assertTrue(os.path.exists(os.path.join(self.test_dir, "test2.jpg")))
 
+    def test_single_convert_saves_jpeg_and_moves_source(self):
+        """Test that conversion writes a JPEG and moves the original to Converted/."""
+        source = Path(self.test_dir) / "sample.heic"
+        source.write_bytes(b"fake-heic-data")
+
+        fake_image = MagicMock()
+
+        with patch('heicconvert.Image.open', return_value=fake_image), \
+             patch('heicconvert.os.rename') as mock_rename:
+            SingleConvertHeictoJpeg(str(source))
+
+        fake_image.save.assert_called_once_with(
+            str(source.with_suffix('.jpg')),
+            'JPEG',
+            quality=90,
+            optimize=False,
+            progressive=False,
+        )
+        mock_rename.assert_called_once_with(
+            str(source),
+            str(Path(self.test_dir) / 'Converted' / 'sample.heic'),
+        )
+
+    def test_single_convert_handles_open_error(self):
+        """Test that image open failures are handled without crashing."""
+        source = Path(self.test_dir) / "broken.heic"
+        source.write_bytes(b"not-a-real-heic")
+
+        with patch('heicconvert.Image.open', side_effect=OSError('bad image')), \
+             patch('heicconvert.tqdm.write') as mock_write:
+            result = SingleConvertHeictoJpeg(str(source))
+
+        self.assertIsNone(result)
+        mock_write.assert_called_once()
+
+    def test_batch_convert_uses_executor_and_progress_bar(self):
+        """Test batch conversion delegates work through the process pool and progress bar."""
+        files = [os.path.join(self.test_dir, 'a.heic'), os.path.join(self.test_dir, 'b.heic')]
+
+        class DummyExecutor:
+            def __init__(self):
+                self.map_calls = []
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def map(self, func, iterable, chunksize=1):
+                self.map_calls.append((func, list(iterable), chunksize))
+                return [func(path) for path in iterable]
+
+        dummy_executor = DummyExecutor()
+
+        with patch('heicconvert.concurrent.futures.ProcessPoolExecutor', return_value=dummy_executor) as mock_executor, \
+             patch('heicconvert.tqdm', side_effect=lambda iterable, total=None: list(iterable)) as mock_tqdm:
+            BatchConvert(files, len(files))
+
+        mock_executor.assert_called_once()
+        self.assertEqual(len(dummy_executor.map_calls), 1)
+        self.assertEqual(dummy_executor.map_calls[0][1], files)
+        mock_tqdm.assert_called_once()
+
 
 if __name__ == '__main__':
     unittest.main()
