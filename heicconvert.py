@@ -17,7 +17,7 @@ def init_worker():
 def BatchConvert(fileList, NumberOfFiles):
     # with concurrent.futures.ThreadPoolExecutor() as executor:
     with concurrent.futures.ProcessPoolExecutor(initializer=init_worker,
-                                                max_workers=os.cpu_count()) as executor:
+                                                max_workers=os.cpu_count() or 4) as executor:
         list(tqdm(executor.map(SingleConvertHeictoJpeg, fileList, chunksize=5), total=NumberOfFiles))
 
 def SingleConvertHeictoJpeg(Heicfile):
