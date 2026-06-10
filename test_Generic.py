@@ -134,6 +134,7 @@ class TestHEICConverter(unittest.TestCase):
         self.assertEqual(dummy_executor.map_calls[0][1], files)
         mock_tqdm.assert_called_once()
 
+#Just a test comment for PR purposes.
 
 if __name__ == '__main__':
     unittest.main()
